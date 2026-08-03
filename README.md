@@ -2,7 +2,7 @@
 This program is used for viewing LiDAR data information
 ## Las Info
 
-Las Info is a Python program designed for viewing and analyzing LiDAR data stored in `.las` and `.laz` file formats. The program reads the selected file, processes the data, and displays various statistics and metadata in the `show_stats` window.
+Las Info is a Python program designed and lightweight destkop for viewing and analyzing LiDAR data stored in `.las` and `.laz` file formats. The program reads the selected file, processes the data, and displays various statistics and metadata in the `show_stats` window. It's provides a simple graphical interface for qucikly inspecting point cloud information without using command-line tools. 
 
 The following information is available:
 
@@ -149,3 +149,9 @@ Sources <br>
 ◦ https://www.geeksforgeeks.org/python/python-gui-tkinter/ <br>
 ◦ https://m.youtube.com/watch?v=UnwwZg1nFmM&pp=0gcJCWQCo7VqN5tD <br>
 ◦ https://docs.python.org/3/library/main.html <br>
+
+## Future plans
+◦ Better view (add a logo etc.) <br>
+◦ Export reports <br>
+◦ Add information for better understanding <br>
+◦ Add reading copc.las / copc.laz <br>  
