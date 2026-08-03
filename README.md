@@ -59,4 +59,27 @@ The following information is available:
 
 ### NIR Information
 
-* Near-Infrared [NIR]
+* Near-Infrared [NIR]*
+
+## How to use an app lasinfo
+
+
+
+## About app
+name: lasinfo
+version: 1.0
+
+Developed by Jaka Dacar
+
+Using libaries in that app
+◦ laspy
+◦ numpy
+◦ tkinter
+◦ OS
+◦ PIL
+Sources
+◦ https://laspy.readthedocs.io/en/latest/intro.html
+◦ https://numpy.org/
+◦ https://www.geeksforgeeks.org/python/python-gui-tkinter/
+◦ https://m.youtube.com/watch?v=UnwwZg1nFmM&pp=0gcJCWQCo7VqN5tD
+◦ https://docs.python.org/3/library/main.html
