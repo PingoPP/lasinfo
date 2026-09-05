@@ -1,12 +1,10 @@
-#import os 
-#import sys
-#conda_env = os.path.dirname(sys.executable)
-#os.environ["TCL_LIBRARY"] = os.path.join(conda_env, "Library", "lib", "tcl8.6")
-#os.environ["TK_LIBRARY"] = os.path.join(conda_env, "Library", "lib", "tk8.6")
 print("Main imported")
 
 from gui import create_gui 
 import tkinter as tk
+
+#Main funcition is the entry point of the program.
+#It creates the main window and starts the GUI event loop
 
 def main(stats=None):
     root = tk.Tk()

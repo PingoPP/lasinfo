@@ -147,7 +147,3 @@ def analyze_las(selected_file):
 
     return stats
 print("Analysis loaded successfully!")
-    }
-
-    return stats
-print("Analysis loaded successfully!")
