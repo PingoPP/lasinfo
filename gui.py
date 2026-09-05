@@ -4,11 +4,26 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
 from tkinter import filedialog
+from helper import (
+    file_information, crs_button, spatial_extent, point_density, intensity_button,
+    scan_angle, gps, edge_of_line, scan_direction, number_of_returns, classification,
+    rgb, nir
+)
+#For making the GUI. I used the tkinter libary. 
+#First step is to created the main window.
+#Second step is to created the two tabs - Intro and Info.
+#Third step is to created buttons for more functionality
+#Fourth step is created text widget for showing all information from analysis.py.
 
+#TKINTER
 def create_gui():
     app = tk.Tk()
     app.title(".LAS")
     app.configure(bg="black")
+
+    photo = ImageTk.PhotoImage(Image.open(r"C:\Users\jakad\OneDrive\Desktop\lasinfo\lasfortab.png"), master=app)
+    app.wm_iconphoto(True, photo)
+    app.geometry("900x700")
 
     style = ttk.Style()
     style.theme_use("default")
@@ -33,6 +48,7 @@ def create_gui():
     )
     title.pack()
 
+    #INTRO
     intro = tk.Label(
         intro_tab,
         text="Welcome! This application was created by Jaka Dacar aka Dacke. "
@@ -54,7 +70,7 @@ def create_gui():
         except FileNotFoundError:
             print("My bad")
             return None
-
+#IT'S NOT WORKING
         img = img.resize((300, 300))
         photo = ImageTk.PhotoImage(img, master=app)
         button = tk.Button(intro_tab, image=photo)
@@ -68,7 +84,7 @@ def create_gui():
     powered = tk.Label(
         intro_tab,
         text="Powered by: Laspy, Numpy, Tkinter, Sys, PIL \n\n "
-            "                           version: 1.0",
+            "                           version: 1.1",
         font=("Roboto", 10),
         fg="white",
         bg="black",
@@ -77,9 +93,10 @@ def create_gui():
     )
     powered.pack()
 
+    #INFO
     stats_tab = tk.Frame(notebook, bg="black")
     notebook.add(stats_tab, text="Info")
-
+    #ANALYZE THE LAS FILE 
     def select_and_analyze_app():
 
         filename = filedialog.askopenfilename(
@@ -96,9 +113,9 @@ def create_gui():
             except Exception as e:
                 messagebox.showwarning("Error", f"Error:\n{e}")
                 return
-
+    #BUTTON FOR SELECTING THE .LAS FILE 
     button_laz = tk.Button(
-        button_frame, 
+        button_frame,
         text="Select .LAS file",
         command=select_and_analyze_app
     )
@@ -106,7 +123,7 @@ def create_gui():
 
     def close_app():
         app.destroy()
-    
+    #BUTTON FOR EXITING THE APP
     button_exit = tk.Button(
         button_frame,
         text="Exit",
@@ -114,71 +131,98 @@ def create_gui():
     )
     button_exit.pack()
     app.mainloop()
-    
+
+#MAKING A BUTTON "?"
+def add_line(widget, text, help_func=None):
+    """?"""
+    widget.insert(tk.END, text)
+    if help_func:
+        widget.insert(tk.END, "  ")
+        btn = tk.Button(
+            widget, text="?", width=1, height=1,
+            bg="gray20", fg="white", relief="flat",
+            command=help_func
+        )
+        widget.window_create(tk.END, window=btn)
+    widget.insert(tk.END, "\n")
+
+#SHWOING ALL INFORMATION FROM ANALYSIS.PY IN GUI.PY
 def show_stats(parent, stats):
-    infotext = "\n".join([
-        f"-----FILE INFORMATION-----\n\n"
-        f"File: {stats['file_information']['file']}" if stats['file_information'] else "File: N/A",
-        f"File Size: {stats['file_information']['file_size']} MB" if stats['file_information'] else "File: N/A",
-        f"Point Format: {stats['file_information']['point_format']}" if stats['file_information'] else "File: N/A",
-        f"LAS Version: {stats['file_information']['las_version']}" if stats ['file_information'] else "File: N/A",
-        f"Total points: {stats['file_information']['total_points']}" if stats ['file_information'] else "File: N/A \n\n",
-
-        f"\n\n-----COORDINATE SYSTEM-----\n\n"
-        f"CRS: {stats['coordinate_system']['crs']}" if stats['coordinate_system'] else "CRS: N/A \n\n",
-        
-        f"\n\n-----SPATIAL EXTENT-----\n\n"
-        f"X: {stats['spatial_extent']['x_min']} - {stats['spatial_extent']['x_max']}" if stats['spatial_extent'] else "X: N/A",
-        f"Y: {stats['spatial_extent']['y_min']} - {stats['spatial_extent']['y_max']}" if stats['spatial_extent'] else "Y: N/A",
-        f"Z: {stats['spatial_extent']['z_min']} - {stats['spatial_extent']['z_max']}" if stats['spatial_extent'] else "Z: N/A \n\n",
-
-        f"\n\n-----POINT STATISTICS-----\n\n"
-        f"Point Density: {stats['point_statistics']['point_density']} pts/m²" if stats['point_statistics'] else "Point Density: N/A",
-        f"Edge of Flight Line: {stats['point_statistics']['edge_of_flight_line_min']} - {stats['point_statistics']['edge_of_flight_line_max']}" if stats['point_statistics'] else "Edge of Flight Line: N/A",
-        f"Intensity: {stats['point_statistics']['intensity_min']} - {stats['point_statistics']['intensity_max']}" if stats['point_statistics'] else "Intensity: N/A",
-        f"Scan Angle: {stats['point_statistics']['scan_angle_min']} - {stats['point_statistics']['scan_angle_max']}" if stats['point_statistics'] else "Scan angle: N/A",
-        f"GPS Time: {stats['point_statistics']['gps_min']} - {stats['point_statistics']['gps_max']}" if stats['point_statistics'] else "GPS Time: N/A \n\n",
-
-        f"\n\n-----RETURN NUMBER-----\n\n"
-#       f"Return Number: {stats['return_information']['return_number']}" if stats['return_information'] else "Return Number: N/A",
-        f"Return Number Min: {stats['return_information']['return_number_min']}" if stats['return_information'] else "Return Number Min: N/A",
-        f"Return Number Max: {stats['return_information']['return_number_max']}" if stats['return_information'] else "Return Number Max: N/A",
-        f"First Return: {stats['return_information']['first_return']}" if stats['return_information'] else "First Returns: N/A",
-        f"Last Return: {stats['return_information']['last_return']}" if stats['return_information'] else "Last Returns: N/A",
-        f"Intermediate Return: {stats['return_information']['intermediate_returns']}" if stats['return_information'] else "Intermediate Returns: N/A \n\n",
-
-        f"\n\n-----CLASSIFICATION-----\n\n"
-        f"Never Classified: {stats['classification']['never_classified']}" if stats['classification'] else "Never Classified: N/A",
-        f"Unassigned: {stats['classification']['unassigned']}" if stats['classification'] else "Unassigned: N/A",
-        f"Ground: {stats['classification']['ground']}" if stats['classification'] else "Ground: N/A",
-        f"Low Vegetation: {stats['classification']['low_vegetation']}" if stats['classification'] else "Low Vegetation: N/A",
-        f"Medium Vegetation: {stats['classification']['medium_vegetation']}" if stats['classification'] else "Medium Vegetation: N/A",
-        f"High Vegetation: {stats['classification']['high_vegetation']}" if stats['classification'] else "High Vegetation: N/A",
-        f"Building: {stats['classification']['building']}" if stats['classification'] else "Building: N/A",
-        f"Low Point: {stats['classification']['low_point']}" if stats['classification'] else "Low Point: N/A",
-        f"Water: {stats['classification']['water']}" if stats['classification'] else "Water: N/A",
-        f"High Noise: {stats['classification']['high_noise']}" if stats['classification'] else "High Noise: N/A \n\n",
-
-        f"\n\n-----RGB-----\n\n"
-        f"Red: {stats['rgb']['red_min']} - {stats['rgb']['red_max']}" if stats['rgb'] else "Red: N/A",
-        f"Green: {stats['rgb']['green_min']} - {stats['rgb']['green_max']}" if stats['rgb'] else "Green: N/A",
-        f"Blue: {stats['rgb']['blue_min']} - {stats['rgb']['blue_max']}" if stats['rgb'] else "Blue: N/A \n\n",
-
-        f"\n\n-----NIR-----\n\n"
-        f"NIR: {stats['nir']['nir_min']} - {stats['nir']['nir_max']}" if stats['nir'] else "NIR: N/A \n\n",
-    ])
-
     text_widget = tk.Text(parent, wrap="word", bg="black", fg="white", font=("Roboto", 12))
-    text_widget.insert("1.0", infotext)
-    text_widget.config(state="normal")
     text_widget.pack(padx=10, pady=10, fill="both", expand=True, anchor="center")
 
+    add_line(text_widget, "-----FILE INFORMATION-----", file_information)
+    fi = stats.get('file_information')
+    #I MADE IN THAT LOGIC; add_line(text_widget, f"x:{xx['xxxx']}" if xx else "x: N/A"), xxxx_button (if is in helper.py written the function for XXXX topic)
+    add_line(text_widget, f"File: {fi['file']}" if fi else "File: N/A")
+    add_line(text_widget, f"File Size: {fi['file_size']} MB" if fi else "File Size: N/A")
+    add_line(text_widget, f"Point Format: {fi['point_format']}" if fi else "Point Format: N/A")
+    add_line(text_widget, f"LAS Version: {fi['las_version']}" if fi else "LAS Version: N/A")
+    add_line(text_widget, f"Total points: {fi['total_points']}" if fi else "Total points: N/A")
+    add_line(text_widget, "\n")
+
+    add_line(text_widget, "-----COORDINATE SYSTEM-----", crs_button)
+    cs = stats.get('coordinate_system')
+    add_line(text_widget, f"CRS: {cs['crs']}" if cs else "CRS: N/A")
+    add_line(text_widget, "\n")
+
+    add_line(text_widget, "-----SPATIAL EXTENT-----", spatial_extent)
+    se = stats.get('spatial_extent')
+    add_line(text_widget, f"X: {se['x_min']} - {se['x_max']}" if se else "X: N/A")
+    add_line(text_widget, f"Y: {se['y_min']} - {se['y_max']}" if se else "Y: N/A")
+    add_line(text_widget, f"Z: {se['z_min']} - {se['z_max']}" if se else "Z: N/A")
+    add_line(text_widget, "\n")
+
+    add_line(text_widget, "-----POINT STATISTICS-----\n")
+    ps = stats.get('point_statistics')
+    add_line(text_widget, f"Point Density: {ps['point_density']} pts/m\u00b2" if ps else "Point Density: N/A", point_density)
+    add_line(text_widget, f"Edge of Flight Line: {ps['edge_of_flight_line_min']} - {ps['edge_of_flight_line_max']}" if ps else "Edge of Flight Line: N/A", edge_of_line)
+    add_line(text_widget, f"Intensity: {ps['intensity_min']} - {ps['intensity_max']}" if ps else "Intensity: N/A", intensity_button)
+    add_line(text_widget, f"Scan Angle: {ps['scan_angle_min']} - {ps['scan_angle_max']}" if ps else "Scan Angle: N/A", scan_angle)
+    add_line(text_widget, f"GPS Time: {ps['gps_min']} - {ps['gps_max']}" if ps else "GPS Time: N/A", gps)
+    add_line(text_widget, "\n")
+
+    add_line(text_widget, "-----RETURN NUMBER-----", number_of_returns)
+    ri = stats.get('return_information')
+    add_line(text_widget, f"Return Number Min: {ri['return_number_min']}" if ri else "Return Number Min: N/A")
+    add_line(text_widget, f"Return Number Max: {ri['return_number_max']}" if ri else "Return Number Max: N/A")
+    add_line(text_widget, f"First Return: {ri['first_return']}" if ri else "First Return: N/A")
+    add_line(text_widget, f"Last Return: {ri['last_return']}" if ri else "Last Return: N/A")
+    add_line(text_widget, f"Intermediate Return: {ri['intermediate_returns']}" if ri else "Intermediate Return: N/A")
+    add_line(text_widget, "\n")
+
+    add_line(text_widget, "-----CLASSIFICATION-----", classification)
+    cl = stats.get('classification')
+    for label, key in [
+        ("Never Classified", "never_classified"), ("Unassigned", "unassigned"),
+        ("Ground", "ground"), ("Low Vegetation", "low_vegetation"),
+        ("Medium Vegetation", "medium_vegetation"), ("High Vegetation", "high_vegetation"),
+        ("Building", "building"), ("Low Point", "low_point"),
+        ("Water", "water"), ("High Noise", "high_noise"),
+    ]:
+        add_line(text_widget, f"{label}: {cl[key]}" if cl else f"{label}: N/A")
+    add_line(text_widget, "\n")
+
+    add_line(text_widget, "-----RGB-----", rgb)
+    rgbv = stats.get('rgb')
+    add_line(text_widget, f"Red: {rgbv['red_min']} - {rgbv['red_max']}" if rgbv else "Red: N/A")
+    add_line(text_widget, f"Green: {rgbv['green_min']} - {rgbv['green_max']}" if rgbv else "Green: N/A")
+    add_line(text_widget, f"Blue: {rgbv['blue_min']} - {rgbv['blue_max']}" if rgbv else "Blue: N/A")
+    add_line(text_widget, "\n")
+
+    add_line(text_widget, "-----NIR-----", nir)
+    nirv = stats.get('nir')
+    add_line(text_widget, f"NIR: {nirv['nir_min']} - {nirv['nir_max']}" if nirv else "NIR: N/A")
+
+    text_widget.config(state="disabled")
+
+    #COPY ALL TEXT IN TEXT WIDGET + BUTTON
     def copy_all(event=None):
         text_widget.clipboard_clear()
-        text_widget.clipboard_append(infotext)
+        text_widget.clipboard_append(text_widget.get("1.0", tk.END))
 
     copy_button = tk.Button(
-        parent, 
+        parent,
         text="Copy",
         command=copy_all
     )
